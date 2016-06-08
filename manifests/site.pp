@@ -50,7 +50,7 @@ node default {
   #  mode => '0755'
   #}
   
-  exec { 'cowsay 'Welcome to ${::fqdn}!' > /etc/motd' :
+  exec { "cowsay 'Welcome to ${::fqdn}!' > /etc/motd" :
     creates => '/etc/motd',
   }
 
