@@ -60,5 +60,7 @@ node default {
     path    => ['/usr/local/bin', '/usr/sbin',],
     cwd     => '/root',
   }
+  
+  include users
 
 }
