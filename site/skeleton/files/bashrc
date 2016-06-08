@@ -2,7 +2,8 @@
 
 # Source global definitions 
 if [ -f /etc/bashrc ]; then  
-  . /etc/bashrc fi
+  . /etc/bashrc 
+fi
 
 # User specific aliases and functions 
 cowsay 'Remember I am your king and milk supplier!'
