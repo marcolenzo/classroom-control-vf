@@ -50,6 +50,11 @@ node default {
   #  mode => '0755'
   #}
   
+  package { 'cowsay':  
+    ensure   => present,  
+    provider => gem, 
+  }
+  
   exec { "cowsay 'Welcome to ${::fqdn}!' > /etc/motd" :
     creates => '/etc/motd',
     path    => ['/usr/bin', '/usr/sbin',],
