@@ -1,7 +1,13 @@
 class nginx (
-	$docroot = '/var/www',
+	 $root = undef,
+	 $default_docroot = '/var/www',
 )
 {
+
+	$docroot = $root ? {
+	   undef   => $default_docroot,
+	   default => $root,
+	}
 
 	File {
 		owner => 'root',
