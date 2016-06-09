@@ -42,7 +42,7 @@ node default {
   
    	if $::virtual != 'physical' {
    		$hypervisor = capitalize($::virtual)
-   		notify { "This is a VM running on ${vmtype}.": 
+   		notify { "This is a VM running on ${hypervisor}.": 
    		}  
    	} 
 }
