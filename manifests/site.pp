@@ -44,5 +44,9 @@ node default {
    		$hypervisor = capitalize($::virtual)
    		notify { "This is a VM running on ${hypervisor} .": 
    		}  
-   	} 
+   	}
+
+    $message = hiera('message')  
+    notify { $message: }
+    
 }
