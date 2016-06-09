@@ -1,54 +1,75 @@
 class nginx (
-	 $root = undef,
-	 $default_docroot = '/var/www',
-)
-{
-
-	$docroot = $root ? {
-	   undef   => $default_docroot,
-	   default => $root,
+	$root = undef,
+) 
+{  
+	case $::osfamily {
+		'redhat','debian' : {
+			$package = 'nginx'
+			$owner   = 'root'
+			$group   = 'root'
+			$confdir = '/etc/nginx'
+			$logdir  = '/var/log/nginx'
+			$default_docroot = '/var/www'
+		}    
+		'windows' : {
+			$package = 'nginx-service'
+			$owner   = 'Administrator'
+			$group   = 'Administrators'
+			$confdir = 'C:/ProgramData/nginx'
+			$logdir  = 'C:/ProgramData/nginx/logs'
+			$default_docroot = 'C:/ProgramData/nginx/html'
+		}    
+		default   : {
+			fail("Module ${module_name} is not supported on ${::osfamily}")
+		}
 	}
+    
+    $user = $::osfamily ? {
+    	'redhat'  => 'nginx',
+    	'debian'  => 'www-data',
+    	'windows' => 'nobody',
+    }
+  
+  	$docroot = $root ? {
+  		undef   => $default_docroot,
+  		default => $root,
+  	}
+  
+  	File {
+  		owner => $owner,
+  		group => $group,
+  		mode  => '0664',
+  	}
+  
+  	package { $package:
+  		ensure => present,
+  	}
+  
+  	file { [ $docroot, "${confdir}/conf.d" ]:
+  		ensure => directory,
+  	}
+  
+  	file { "${docroot}/index.html":
+  		ensure => file,
+  		source => 'puppet:///modules/nginx/index.html',
+  	}  
 
-	File {
-		owner => 'root',
-		group => 'root',
-		mode => '0664',
-	}
+  	file { "${confdir}/nginx.conf":
+  		ensure  => file,
+  		content => template('nginx/nginx.conf.erb'),
+  		notify  => Service['nginx'],
+  	}  
 
-	package { 'nginx':
-		ensure => 'present',
-	}
-
-	file { '/etc/nginx/nginx.conf':
-		ensure => 'file',
-		source => 'puppet:///modules/nginx/nginx.conf',
-		require => Package['nginx'],
-		notify  => Service['nginx'],
-	}
-
-	file { '/etc/nginx/conf.d':
-	    ensure => directory,
-	}
-
-	file { '/etc/nginx/conf.d/default.conf':
-		ensure => file,
-		source => 'puppet:///modules/nginx/default.conf',
-		require => Package['nginx'],
-		notify  => Service['nginx'],
-	}
-
-	file { "${docroot}":
-		ensure => directory,
-	}
-
-	file { "${docroot}/index.html":
-		ensure => file,
-	 	source => 'puppet:///modules/nginx/index.html',
-	}
-
-	service { 'nginx':
-		ensure => running,
-		enable => true,
-	}
-
+  	file { "${confdir}/conf.d/default.conf":
+  		ensure  => file,
+  		content => template('nginx/default.conf.erb'),
+  		notify  => Service['nginx'],
+  	}
+  	
+  	service { 'nginx':
+  		ensure => running,
+  		enable => true,
+  	}
+  }
 }
+
