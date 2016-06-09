@@ -12,4 +12,12 @@ class users::admins {
 		# group defaults to $title 
 	}
 
+	group { 'admin':
+		ensure => present,  
+	}
+
+	group { 'developer':
+		ensure => present,  
+	}
+
 }
