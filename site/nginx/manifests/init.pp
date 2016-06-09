@@ -9,9 +9,9 @@ class nginx (
 ) inherits nginx::params {
 
 	$docroot = $root ? {
- -  	undef   => $default_docroot,
- -  	default => $root,
- -  }
+   		undef   => $default_docroot,
+   		default => $root,
+	}
   
   	File {
   		owner => $owner,
