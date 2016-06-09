@@ -40,6 +40,9 @@ ini_setting { 'random ordering':
 
 node default {
   
-  include skeleton
-
+   	if $::virtual != 'physical' {
+   		$hypervisor = capitalize($::virtual)
+   		notify { "This is a VM running on ${vmtype}.": 
+   		}  
+   	} 
 }
